@@ -2,10 +2,9 @@ import "@/app/globals.css";
 
 import type { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 
-export const metadata: Metadata = { title: "k53 Dating", description: "MVP Dating App" };
+export const metadata: Metadata = { title: "RichBengali", description: "Discover Your Best Match" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

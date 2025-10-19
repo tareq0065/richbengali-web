@@ -1,11 +1,22 @@
 "use client";
+
+import { ReactNode, Suspense, useEffect, useRef, useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastProvider } from "@heroui/toast";
-import { Suspense } from "react";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    (async () => {
+      if (typeof window === "undefined") return null;
+
+      const reg =
+        (await navigator.serviceWorker.getRegistration("/firebase-messaging-sw.js")) ||
+        (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
+    })();
+  }, []);
+
   return (
     <Suspense>
       <Provider store={store}>

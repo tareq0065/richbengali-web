@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getMessaging, getToken, onMessage, isSupported } from "firebase/messaging";
+
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -7,6 +8,7 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+
 export async function initFcmAndGetToken(): Promise<string | null> {
   try {
     if (!(await isSupported())) return null;
@@ -25,4 +27,9 @@ export function onInAppMessage(cb: (payload: any) => void) {
     const messaging = getMessaging();
     onMessage(messaging, cb);
   } catch {}
+}
+
+export function currentPermission(): NotificationPermission {
+  if (typeof window === "undefined" || !("Notification" in window)) return "denied";
+  return Notification.permission;
 }

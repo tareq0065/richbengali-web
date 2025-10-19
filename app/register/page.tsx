@@ -47,6 +47,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [registerApi, { isLoading: isRegistering }] = useRegisterMutation();
   const [updateFcm] = useUpdateFcmMutation();
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     email: "",
@@ -90,6 +91,13 @@ export default function RegisterPage() {
   const [phoneResendBusy, setPhoneResendBusy] = useState(false);
 
   useEffect(() => {
+    (async () => {
+      const fcm = await initFcmAndGetToken();
+      setFcmToken(fcm);
+    })();
+  }, []);
+
+  useEffect(() => {
     if (emailCooldown <= 0) return;
     const t = setTimeout(() => setEmailCooldown((s) => s - 1), 1000);
     return () => clearTimeout(t);
@@ -117,8 +125,7 @@ export default function RegisterPage() {
 
       // best-effort FCM update
       try {
-        const fcm = await initFcmAndGetToken();
-        if (fcm) await updateFcm({ token: fcm });
+        if (fcmToken) await updateFcm({ token: fcmToken });
       } catch {}
 
       router.push("/home");
@@ -505,13 +512,13 @@ export default function RegisterPage() {
                                 code: emailOtp,
 
                                 // SAME FIELDS AS /register:
-                                phone: null, // or provide a captured phone if you have one here
+                                phone: null,
                                 name: form.name,
                                 age: form.age,
                                 gender: form.gender,
                                 city: form.city || null,
-                                profilePictureUrl: null, // pass actual value if available
-                                fcmToken: null, // or prefetch/send here
+                                profilePictureUrl: null,
+                                fcmToken: fcmToken,
                               }),
                             },
                           );
@@ -529,11 +536,6 @@ export default function RegisterPage() {
 
                           saveToken(token);
                           setCookieToken(token);
-
-                          try {
-                            const fcm = await initFcmAndGetToken();
-                            if (fcm) await updateFcm({ token: fcm });
-                          } catch {}
 
                           router.push("/home");
                         } catch (e: any) {
@@ -567,6 +569,12 @@ export default function RegisterPage() {
                     </Button>
                   </>
                 )}
+              </div>
+
+              <div className="text-xs text-right mt-2">
+                <Link className="underline" href="/login">
+                  Have an account? Sign in
+                </Link>
               </div>
             </Tab>
 

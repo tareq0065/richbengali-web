@@ -7,6 +7,7 @@ import { saveToken } from "@/lib/auth";
 import { initFcmAndGetToken } from "@/lib/firebase";
 import { Button, Input, Tabs, Tab, Card, CardBody, InputOtp } from "@heroui/react";
 import { Mail, Phone } from "lucide-react";
+import { store } from "@/store";
 
 function isValidE164(v: string) {
   return /^\+[1-9]\d{6,14}$/.test((v || "").trim());
@@ -19,6 +20,7 @@ export default function LoginPage() {
 
   const [login] = useLoginMutation();
   const [updateFcm] = useUpdateFcmMutation();
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLogging] = useState<boolean>(false);
 
@@ -35,7 +37,12 @@ export default function LoginPage() {
     document.cookie = `token=${token}; Path=/; SameSite=Lax`;
   }
 
-  useEffect(() => {});
+  useEffect(() => {
+    (async () => {
+      const fcm = await initFcmAndGetToken();
+      setFcmToken(fcm);
+    })();
+  }, []);
 
   // --- Email login via your Next API (kept as-is) ---
   async function onSubmitEmail(e: React.FormEvent) {
@@ -65,13 +72,11 @@ export default function LoginPage() {
         setCookieToken(token);
       }
 
-      const fcm = await initFcmAndGetToken();
-      if (fcm) {
+      if (fcmToken) {
         try {
-          await updateFcm({ token: fcm });
-        } catch {
-          router.replace(nextDest);
-        }
+          await updateFcm({ token: fcmToken });
+        } catch {}
+        router.replace(nextDest);
       }
 
       router.replace(nextDest);
