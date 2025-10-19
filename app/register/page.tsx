@@ -112,7 +112,11 @@ export default function RegisterPage() {
   }, [phoneCooldown]);
 
   function setCookieToken(token: string) {
-    document.cookie = `token=${token}; Path=/; SameSite=Lax`;
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `token=${token}; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}${secure}`;
+  }
+  function hardRedirect(to: string) {
+    window.location.replace(to); // no back to register
   }
 
   async function onSubmitEmail(e: React.FormEvent) {
@@ -211,7 +215,7 @@ export default function RegisterPage() {
         }
       } catch {}
 
-      router.replace(nextDest);
+      hardRedirect("/home");
     } catch (e: any) {
       setGlobalError(e?.message || "Invalid code");
     } finally {
@@ -539,7 +543,7 @@ export default function RegisterPage() {
                           saveToken(token);
                           setCookieToken(token);
 
-                          router.replace(nextDest);
+                          hardRedirect("/home");
                         } catch (e: any) {
                           setGlobalError(e?.message || "Verification failed");
                         } finally {
