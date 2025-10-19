@@ -122,6 +122,7 @@ export default function ForgotPage() {
                 label="Email"
                 size="sm"
                 value={email}
+                labelPlacement="outside-top"
                 onChange={(e) => setEmail(e.target.value)}
                 startContent={<Mail size={16} />}
                 isRequired
