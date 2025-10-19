@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useRegisterMutation, useUpdateFcmMutation } from "@/store/api";
 import { saveToken } from "@/lib/auth";
 import { initFcmAndGetToken } from "@/lib/firebase";
@@ -48,6 +48,8 @@ export default function RegisterPage() {
   const [registerApi, { isLoading: isRegistering }] = useRegisterMutation();
   const [updateFcm] = useUpdateFcmMutation();
   const [fcmToken, setFcmToken] = useState<string | null>(null);
+  const search = useSearchParams();
+  const nextDest = search.get("next") || "/home";
 
   const [form, setForm] = useState({
     email: "",
@@ -209,7 +211,7 @@ export default function RegisterPage() {
         }
       } catch {}
 
-      router.push("/home");
+      router.replace(nextDest);
     } catch (e: any) {
       setGlobalError(e?.message || "Invalid code");
     } finally {
@@ -537,7 +539,7 @@ export default function RegisterPage() {
                           saveToken(token);
                           setCookieToken(token);
 
-                          router.push("/home");
+                          router.replace(nextDest);
                         } catch (e: any) {
                           setGlobalError(e?.message || "Verification failed");
                         } finally {
