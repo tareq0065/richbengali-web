@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLoginMutation, useUpdateFcmMutation } from "@/store/api";
@@ -35,6 +35,8 @@ export default function LoginPage() {
     document.cookie = `token=${token}; Path=/; SameSite=Lax`;
   }
 
+  useEffect(() => {});
+
   // --- Email login via your Next API (kept as-is) ---
   async function onSubmitEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -67,7 +69,9 @@ export default function LoginPage() {
       if (fcm) {
         try {
           await updateFcm({ token: fcm });
-        } catch {}
+        } catch {
+          router.replace(nextDest);
+        }
       }
 
       router.replace(nextDest);
