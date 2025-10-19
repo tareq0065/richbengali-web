@@ -6,7 +6,6 @@ import { addToast, Button, Card, CardBody, Input } from "@heroui/react";
 import { Mail } from "lucide-react";
 
 export default function ForgotPage() {
-  const router = useRouter();
   const search = useSearchParams();
   const token = search.get("token");
 
@@ -28,6 +27,10 @@ export default function ForgotPage() {
     if (confirm !== password) return "Passwords do not match";
     return null;
   }, [confirm, password]);
+
+  function hardRedirect(to: string) {
+    window.location.replace(to); // no back to register
+  }
 
   async function submitForgot(e: React.FormEvent) {
     e.preventDefault();
@@ -95,7 +98,7 @@ export default function ForgotPage() {
           "Password updated. You can sign in now. You will redirect to the login page in 3 seconds.",
       });
       // Optional: redirect after a short delay
-      setTimeout(() => router.push("/login"), 3000);
+      setTimeout(() => hardRedirect("/login"), 3000);
     } catch (err: any) {
       addToast({
         title: "Error",
