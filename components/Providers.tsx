@@ -5,6 +5,10 @@ import { Provider } from "react-redux";
 import { store } from "@/store";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastProvider } from "@heroui/toast";
+import { MeetingProvider } from "@/components/MeetingProvider";
+import { useGetMeQuery } from "@/store/api";
+import { CallModal } from "@/components/call/CallModal";
+import CallProvider from "@/components/CallProvider";
 
 export default function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -27,7 +31,9 @@ export default function Providers({ children }: { children: ReactNode }) {
             timeout: 4000,
           }}
         />
-        <HeroUIProvider>{children}</HeroUIProvider>
+        <CallProvider>
+          <HeroUIProvider>{children}</HeroUIProvider>
+        </CallProvider>
       </Provider>
     </Suspense>
   );

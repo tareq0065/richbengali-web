@@ -37,6 +37,10 @@ export default function LoginPage() {
     document.cookie = `token=${token}; Path=/; SameSite=Lax`;
   }
 
+  function hardRedirect(to: string) {
+    window.location.replace(to); // no back to register
+  }
+
   useEffect(() => {
     (async () => {
       const fcm = await initFcmAndGetToken();
@@ -76,10 +80,10 @@ export default function LoginPage() {
         try {
           await updateFcm({ token: fcmToken });
         } catch {}
-        router.replace(nextDest);
+        hardRedirect("/home");
       }
 
-      router.replace(nextDest);
+      hardRedirect("/home");
 
       setLogging(false);
     } catch (e: any) {

@@ -3,7 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { getSocket } from "@/lib/socket";
 import { getUserIdFromToken, getToken } from "@/lib/auth";
-import { useGetUserQuery } from "@/store/api"; // only to show other user's name
+import { useGetUserQuery } from "@/store/api";
+import { Button, Textarea } from "@heroui/react";
+import { PhoneCall, SendIcon } from "lucide-react";
+import { useMeeting } from "@/components/MeetingProvider"; // only to show other user's name
 
 type ChatMessage = {
   id?: string;
@@ -21,6 +24,7 @@ function sid(v: string | number | undefined | null) {
 }
 
 export default function ChatWindow({ otherUserId }: { otherUserId: string }) {
+  const { startCall } = useMeeting();
   const meId = sid(getUserIdFromToken(getToken()));
   const otherId = sid(otherUserId);
 
@@ -138,6 +142,23 @@ export default function ChatWindow({ otherUserId }: { otherUserId: string }) {
 
   return (
     <div className="flex flex-col h-full">
+      <div className="flex justify-end shadow py-2 px-4">
+        <Button
+          color="secondary"
+          variant="flat"
+          isIconOnly
+          onPress={() =>
+            startCall({
+              id: otherId,
+              name: otherUser?.name,
+              location: otherUser?.city || undefined,
+              avatarUrl: otherUser?.profile_picture_url || undefined,
+            })
+          }
+        >
+          <PhoneCall size={16} />
+        </Button>
+      </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3 relative">
         <div className="p-2 text-center absolute bottom-0 left-0 right-0">
           {loading ? "Loading . . ." : ""}
@@ -178,9 +199,10 @@ export default function ChatWindow({ otherUserId }: { otherUserId: string }) {
         })}
       </div>
 
-      <div className="p-2 flex gap-2 border-t">
-        <textarea
+      <div className="p-2 flex gap-2">
+        <Textarea
           value={text}
+          variant="bordered"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
@@ -188,13 +210,13 @@ export default function ChatWindow({ otherUserId }: { otherUserId: string }) {
               sendMessage();
             }
           }}
-          rows={2}
-          className="flex-1 border rounded px-2 py-2 text-sm resize-none"
+          maxRows={1}
+          className="resize-none"
           placeholder="Type a message... (Enter to send, Shift+Enter for newline)"
         />
-        <button onClick={sendMessage} className="px-3 py-2 bg-blue-600 text-white rounded text-sm">
-          Send
-        </button>
+        <Button onPress={sendMessage} isIconOnly color="success">
+          <SendIcon color="white" />
+        </Button>
       </div>
     </div>
   );

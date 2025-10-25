@@ -200,3 +200,11 @@ export interface CheckoutRequest {
   plan?: string; // e.g. "weekly" | "monthly" | "yearly" | "superlike_pack" | ...
   price_id?: string; // Stripe price_***
 }
+
+export type UserInfo = {
+  id: string;
+  name?: string;
+  username?: string;
+  location?: string;
+  avatarUrl?: string;
+};
