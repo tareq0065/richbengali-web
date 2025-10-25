@@ -4,7 +4,7 @@ import type { Socket } from "socket.io-client";
 import { getSocket } from "@/lib/socket";
 import { getUserIdFromToken, getToken } from "@/lib/auth";
 import { useGetUserQuery } from "@/store/api";
-import { Button, Textarea } from "@heroui/react";
+import { Button, Popover, PopoverContent, PopoverTrigger, Textarea } from "@heroui/react";
 import { PhoneCall, SendIcon } from "lucide-react";
 import { useMeeting } from "@/components/MeetingProvider"; // only to show other user's name
 
@@ -143,21 +143,40 @@ export default function ChatWindow({ otherUserId }: { otherUserId: string }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-end shadow py-2 px-4">
-        <Button
-          color="secondary"
-          variant="flat"
-          isIconOnly
-          onPress={() =>
-            startCall({
-              id: otherId,
-              name: otherUser?.name,
-              location: otherUser?.city || undefined,
-              avatarUrl: otherUser?.profile_picture_url || undefined,
-            })
-          }
-        >
-          <PhoneCall size={16} />
-        </Button>
+        {otherUser && otherUser.is_premium ? (
+          <Button
+            color="secondary"
+            variant="flat"
+            isIconOnly
+            onPress={() =>
+              startCall({
+                id: otherId,
+                name: otherUser?.name,
+                location: otherUser?.city || undefined,
+                avatarUrl: otherUser?.profile_picture_url || undefined,
+              })
+            }
+          >
+            <PhoneCall size={16} />
+          </Button>
+        ) : (
+          <Popover placement="right">
+            <PopoverTrigger>
+              <Button color="secondary" variant="flat" isIconOnly>
+                <PhoneCall size={16} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="px-1 py-2">
+                <div className="text-small font-bold">Sorry!</div>
+                <div className="text-tiny">
+                  The user {otherUser && otherUser.name} is not a premium user. <br />
+                  Please ask them to subscribe our premium packages to make calls.
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3 relative">
         <div className="p-2 text-center absolute bottom-0 left-0 right-0">
