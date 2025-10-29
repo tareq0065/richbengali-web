@@ -47,7 +47,6 @@ export function CallModal({ open, zIndex = 9999 }: { open?: boolean; zIndex?: nu
 
   const peer = incomingCall?.from || currentPeer;
   const inCall = state === "inCall";
-  console.log("peer:", peer);
 
   const formattedTime = useMemo(() => formatTime(elapsedSeconds || 0), [elapsedSeconds]);
 

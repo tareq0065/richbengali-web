@@ -249,7 +249,13 @@ export default function LoginPage() {
                       isRequired
                     />
                     {error && <div className="text-red-600 text-sm">{error}</div>}
-                    <Button onPress={sendPhoneOtp} fullWidth isLoading={loading} disabled={loading}>
+                    <Button
+                      color="primary"
+                      onPress={sendPhoneOtp}
+                      fullWidth
+                      isLoading={loading}
+                      disabled={loading}
+                    >
                       Send Code
                     </Button>
                     <div className="flex justify-between text-xs text-gray-600 mt-3">

@@ -414,6 +414,7 @@ export default function RegisterPage() {
                       </div>
                     )}
                     <Button
+                      color="primary"
                       fullWidth
                       onPress={async () => {
                         setGlobalError(null);
@@ -669,7 +670,7 @@ export default function RegisterPage() {
                     </div>
                   )}
 
-                  <Button onPress={sendPhoneOtp} fullWidth isLoading={otpBusy}>
+                  <Button color="primary" onPress={sendPhoneOtp} fullWidth isLoading={otpBusy}>
                     Send Code
                   </Button>
                   <div className="text-xs text-right mt-2">
